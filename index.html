@@ -341,7 +341,7 @@
                 }
             });
 
-            // Touch events (Swipe) con corrección para iOS
+            // Touch events (Swipe) con corrección robusta para iOS
             track.addEventListener('touchstart', (e) => {
                 startX = e.changedTouches[0].clientX;
                 startY = e.changedTouches[0].clientY;
@@ -357,34 +357,37 @@
                 const diffX = Math.abs(moveX - startX);
                 const diffY = Math.abs(moveY - startY);
                 
-                // Si el movimiento es horizontal, bloqueamos los gestos de iOS (como el back)
-                if (diffX > diffY) {
+                // Si el movimiento es claramente horizontal y el evento es cancelable, bloqueamos el default de iOS
+                if (diffX > diffY && e.cancelable) {
                     e.preventDefault();
                 }
-            }, { passive: false }); // Debe ser false para permitir e.preventDefault() en iOS
+            }, { passive: false });
 
             track.addEventListener('touchend', (e) => {
+                if (!isDragging) return; // Si ya se canceló, no hacemos nada
                 isDragging = false;
                 track.style.transition = 'transform 0.3s ease-out';
                 
                 const endX = e.changedTouches[0].clientX;
                 const diff = endX - startX;
                 
-                // Umbral para considerar que es un swipe (50px)
                 if (Math.abs(diff) > 50) {
                     if (diff > 0 && currentIndex > 0) {
-                        // Swipe derecha (anterior)
                         currentIndex--;
                     } else if (diff < 0 && currentIndex < slides.length - 1) {
-                        // Swipe izquierda (siguiente)
                         currentIndex++;
                     }
                 }
-                
                 updateCarousel();
             });
 
-            // Inicializar estado de botones
+            // FUNDAMENTAL PARA IOS: Reiniciar si iOS interrumpe el gesto (por ejemplo, con los bordes de la pantalla)
+            track.addEventListener('touchcancel', () => {
+                isDragging = false;
+                track.style.transition = 'transform 0.3s ease-out';
+                updateCarousel();
+            });
+
             updateCarousel();
         });
     </script>
