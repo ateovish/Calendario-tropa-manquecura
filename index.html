@@ -2,189 +2,380 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario Manquecura</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calendario Scout Manquecura</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        scout: {
+                            dark: '#0a120e',
+                            card: '#14221b',
+                            green: '#40916c',
+                            light: '#b7e4c7',
+                            gray: '#8a9c94',
+                            alert: '#ff4d4d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: white;
+            background-color: #0a120e;
+            color: #ffffff;
+            overscroll-behavior-y: none; 
+            touch-action: pan-y;
+        }
+        
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        .carousel-track {
             display: flex;
-            flex-direction: column;
+            transition: transform 0.3s ease-out;
+            height: 100%;
+        }
+
+        .carousel-slide {
+            flex: 0 0 100%;
+            width: 100%;
+            padding: 1rem;
+            display: flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            overflow: hidden;
         }
-        .carousel {
-            position: relative;
-            width: 90%;
-            max-width: 400px;
-            height: 70vh;
-            overflow: hidden;
-            border-radius: 15px;
-            background-color: #1e1e1e;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            /* Importante para evitar que la pantalla haga refresh al deslizar en Android */
-            touch-action: pan-y; 
+
+        .card-shadow {
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8);
         }
-        .slides {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.4s ease-in-out;
-        }
-        .slide {
-            min-width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #2e7d32;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .header h2 { margin: 0; color: #4caf50; }
-        .event {
-            background-color: #2c2c2c;
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #4caf50;
-        }
-        .event.alert { border-left-color: #f44336; }
-        .event.warning { border-left-color: #ff9800; }
-        .date { font-weight: bold; font-size: 1.1em; margin-bottom: 5px; }
-        .controls { margin-top: 20px; display: flex; gap: 20px; }
-        button {
-            background-color: #2e7d32;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        button:active { background-color: #1b5e20; }
-        .logo {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .logo span { color: #4caf50; }
     </style>
 </head>
-<body>
+<body class="h-[100dvh] w-full overflow-hidden flex flex-col">
 
-    <!-- Aquí está el cambio: de "Manque <span>Cura</span>" a "Manque<span>cura</span>" -->
-    <div class="logo">Manque<span>cura</span></div>
+    <header class="w-full p-6 flex flex-col items-center justify-center bg-scout-dark z-10 shadow-md">
+        <div class="w-20 h-20 bg-scout-card rounded-full flex items-center justify-center mb-3 border-2 border-scout-green overflow-hidden">
+            <img src="https://placehold.co/200x200/0a120e/40916c?text=MC" alt="Logo Manquecura" class="w-full h-full object-cover">
+        </div>
+        <h1 class="text-xl font-900 tracking-wider uppercase text-scout-light text-center">
+            Ciclo Scout
+        </h1>
+        <h2 class="text-sm font-600 text-scout-gray tracking-widest mt-1">
+            MANQUE<span class="text-scout-green">CURA</span>
+        </h2>
+    </header>
 
-    <div class="carousel" id="carousel">
-        <div class="slides" id="slides">
-            <!-- Slide Octubre -->
-            <div class="slide">
-                <div class="header"><h2>🏕️ Octubre</h2></div>
-                <div class="event"><div class="date">03 Oct</div>Supervivencia dirigentes (Mike, Álvaro)</div>
-                <div class="event"><div class="date">10 Oct</div>Campamento</div>
-                <div class="event alert"><div class="date">17 Oct</div>🚫 No hay scout</div>
-                <div class="event"><div class="date">24 Oct</div>Deportes (Álvaro, Seba)</div>
-                <div class="event warning"><div class="date">31 Oct</div>Halloween 🎃</div>
+    <main class="flex-1 relative w-full overflow-hidden">
+        <div id="track" class="carousel-track">
+            
+            <!-- Slide 1 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-scout-green/10 rounded-bl-full z-0"></div>
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Octubre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">03</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Supervivencia Dirigentes</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-users text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Mike, Álvaro</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- Slide Noviembre -->
-            <div class="slide">
-                <div class="header"><h2>🧗‍♂️ Noviembre</h2></div>
-                <div class="event"><div class="date">07 Nov</div>Raid</div>
-                <div class="event"><div class="date">14 Nov</div>Pijamada (Patrick, Álvaro)</div>
-                <div class="event"><div class="date">21 Nov</div>Trekking dir. (Álvaro, Iván)</div>
-                <div class="event"><div class="date">28 Nov</div>Master Chef 👨‍🍳 (Vicente, Iván, Alonso, Mike)</div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-scout-green/10 rounded-bl-full z-0"></div>
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Octubre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">10</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Campamento</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-tent text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Actividad General</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- Slide Diciembre -->
-            <div class="slide">
-                <div class="header"><h2>🏆 Diciembre</h2></div>
-                <div class="event"><div class="date">05 Dic</div>Boxeo 🥊 (Gaspar, Álvaro)</div>
-                <div class="event"><div class="date">12 Dic</div>Quita pañolín (Patrick, Álvaro)</div>
-                <div class="event"><div class="date">19 Dic</div>Bandera rusa 🚩 (Nico, Álvaro, José)</div>
+
+            <!-- Slide 3 (No hay scout) -->
+            <div class="carousel-slide">
+                <div class="bg-[#1a1212] w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-alert/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-scout-alert/10 rounded-bl-full z-0"></div>
+                    <div class="relative z-10 flex flex-col items-center text-center opacity-80">
+                        <span class="text-scout-alert font-800 text-lg mb-1 tracking-widest uppercase">Octubre</span>
+                        <span class="text-7xl font-900 mb-6 text-white/50">17</span>
+                        <h3 class="text-2xl font-800 text-scout-alert mb-4 leading-tight">No hay scout 🚫</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-ban text-white/40 text-sm"></i>
+                            <span class="text-white/40 font-600 text-sm">Fin de semana libre</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- Slide 4 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Octubre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">24</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Deportes</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-users text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Álvaro, Seba</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5 -->
+            <div class="carousel-slide">
+                <div class="bg-[#1a1712] w-full max-w-sm rounded-3xl p-8 card-shadow border border-orange-500/20 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-orange-500 font-800 text-lg mb-1 tracking-widest uppercase">Octubre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">31</span>
+                        <h3 class="text-2xl font-800 text-orange-400 mb-4 leading-tight">Halloween 🎃</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-ghost text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Especial</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 6 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Noviembre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">07</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Raid</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-map-location-dot text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Actividad General</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 7 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Noviembre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">14</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Pijamada</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-users text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Patrick, Álvaro</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 8 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Noviembre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">21</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Trekking Dirigentes</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-mountain text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Álvaro, Iván</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 9 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Noviembre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">28</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Master Chef 👨‍🍳</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full text-center">
+                            <i class="fa-solid fa-users text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-[13px] leading-tight">Vicente, Iván,<br>Alonso, Mike</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 10 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Diciembre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">05</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Boxeo 🥊</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-users text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Gaspar, Álvaro</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 11 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Diciembre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">12</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Quita pañolín</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-users text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Patrick, Álvaro</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 12 -->
+            <div class="carousel-slide">
+                <div class="bg-scout-card w-full max-w-sm rounded-3xl p-8 card-shadow border border-scout-green/20 relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center text-center">
+                        <span class="text-scout-green font-800 text-lg mb-1 tracking-widest uppercase">Diciembre</span>
+                        <span class="text-7xl font-900 mb-6 text-white">19</span>
+                        <h3 class="text-2xl font-800 text-scout-light mb-4 leading-tight">Bandera rusa 🚩</h3>
+                        <div class="flex items-center justify-center gap-2 bg-black/30 py-2 px-4 rounded-full">
+                            <i class="fa-solid fa-users text-scout-gray text-sm"></i>
+                            <span class="text-scout-gray font-600 text-sm">Nico, Álvaro, José</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="w-full pb-8 pt-4 px-6 bg-scout-dark z-10 flex flex-col items-center justify-center gap-4">
+        
+        <!-- Indicador de página (dots) -->
+        <div id="dots-container" class="flex gap-1.5 justify-center flex-wrap max-w-xs mb-2">
+            <!-- Generado por JS -->
+        </div>
+
+        <!-- Botones de Navegación -->
+        <div class="flex w-full justify-between items-center max-w-sm">
+            <button id="prevBtn" class="w-14 h-14 rounded-full bg-scout-card text-scout-green border-2 border-scout-green/30 flex items-center justify-center text-xl shadow-lg active:bg-scout-green active:text-white transition-colors disabled:opacity-30 disabled:active:bg-scout-card disabled:active:text-scout-green">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            
+            <div class="text-scout-gray font-600 text-sm">
+                Desliza o usa flechas
+            </div>
+
+            <button id="nextBtn" class="w-14 h-14 rounded-full bg-scout-card text-scout-green border-2 border-scout-green/30 flex items-center justify-center text-xl shadow-lg active:bg-scout-green active:text-white transition-colors disabled:opacity-30 disabled:active:bg-scout-card disabled:active:text-scout-green">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
         </div>
     </div>
 
-    <div class="controls">
-        <button id="prevBtn">&#8592;</button>
-        <button id="nextBtn">&#8594;</button>
-    </div>
-
     <script>
-        const slides = document.getElementById('slides');
-        const slideElements = document.querySelectorAll('.slide');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const carousel = document.getElementById('carousel');
-        
-        let currentIndex = 0;
-        
-        function updateSlide() {
-            slides.style.transform = `translateX(-${currentIndex * 100}%)`;
-        }
-        
-        nextBtn.addEventListener('click', () => {
-            if (currentIndex < slideElements.length - 1) {
-                currentIndex++;
-                updateSlide();
-            }
-        });
-        
-        prevBtn.addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateSlide();
-            }
-        });
-
-        // --- SOLUCIÓN PARA DESLIZAR CON EL DEDO (SWIPE) ---
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        // Detecta dónde se toca la pantalla por primera vez
-        carousel.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-
-        // Detecta dónde se levanta el dedo
-        carousel.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, { passive: true });
-
-        // Calcula la dirección del movimiento
-        function handleSwipe() {
-            const swipeThreshold = 50; // Píxeles de tolerancia
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('track');
+            const slides = Array.from(document.querySelectorAll('.carousel-slide'));
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const dotsContainer = document.getElementById('dots-container');
             
-            if (touchStartX - touchEndX > swipeThreshold) {
-                // Deslizó hacia la izquierda -> Siguiente
-                if (currentIndex < slideElements.length - 1) {
-                    currentIndex++;
-                    updateSlide();
-                }
+            let currentIndex = 0;
+            let startX = 0;
+            let isDragging = false;
+
+            // Inicializar puntos (dots)
+            slides.forEach((_, index) => {
+                const dot = document.createElement('div');
+                dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${index === 0 ? 'bg-scout-green w-4' : 'bg-scout-gray/40'}`;
+                dotsContainer.appendChild(dot);
+            });
+            const dots = Array.from(dotsContainer.children);
+
+            function updateCarousel() {
+                // Mover el contenedor
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                // Actualizar botones
+                prevBtn.disabled = currentIndex === 0;
+                nextBtn.disabled = currentIndex === slides.length - 1;
+
+                // Actualizar puntos
+                dots.forEach((dot, index) => {
+                    if (index === currentIndex) {
+                        dot.className = 'w-4 h-2 rounded-full transition-all duration-300 bg-scout-green';
+                    } else {
+                        dot.className = 'w-2 h-2 rounded-full transition-all duration-300 bg-scout-gray/40';
+                    }
+                });
             }
-            if (touchEndX - touchStartX > swipeThreshold) {
-                // Deslizó hacia la derecha -> Anterior
+
+            // Click events
+            prevBtn.addEventListener('click', () => {
                 if (currentIndex > 0) {
                     currentIndex--;
-                    updateSlide();
+                    updateCarousel();
                 }
-            }
-        }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < slides.length - 1) {
+                    currentIndex++;
+                    updateCarousel();
+                }
+            });
+
+            // Touch events (Swipe)
+            track.addEventListener('touchstart', (e) => {
+                startX = e.changedTouches[0].clientX;
+                isDragging = true;
+                // Reducir la transición al arrastrar para evitar demoras
+                track.style.transition = 'none';
+            }, { passive: true });
+
+            track.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+            }, { passive: true });
+
+            track.addEventListener('touchend', (e) => {
+                isDragging = false;
+                track.style.transition = 'transform 0.3s ease-out';
+                
+                const endX = e.changedTouches[0].clientX;
+                const diff = endX - startX;
+                
+                // Umbral para considerar que es un swipe (50px)
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0 && currentIndex > 0) {
+                        // Swipe derecha (anterior)
+                        currentIndex--;
+                    } else if (diff < 0 && currentIndex < slides.length - 1) {
+                        // Swipe izquierda (siguiente)
+                        currentIndex++;
+                    }
+                }
+                
+                updateCarousel();
+            });
+
+            // Inicializar estado de botones
+            updateCarousel();
+        });
     </script>
 </body>
 </html>
