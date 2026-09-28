@@ -297,6 +297,7 @@
             
             let currentIndex = 0;
             let startX = 0;
+            let startY = 0;
             let isDragging = false;
 
             // Inicializar puntos (dots)
@@ -340,17 +341,27 @@
                 }
             });
 
-            // Touch events (Swipe)
+            // Touch events (Swipe) con corrección para iOS
             track.addEventListener('touchstart', (e) => {
                 startX = e.changedTouches[0].clientX;
+                startY = e.changedTouches[0].clientY;
                 isDragging = true;
-                // Reducir la transición al arrastrar para evitar demoras
                 track.style.transition = 'none';
             }, { passive: true });
 
             track.addEventListener('touchmove', (e) => {
                 if (!isDragging) return;
-            }, { passive: true });
+                
+                const moveX = e.touches[0].clientX;
+                const moveY = e.touches[0].clientY;
+                const diffX = Math.abs(moveX - startX);
+                const diffY = Math.abs(moveY - startY);
+                
+                // Si el movimiento es horizontal, bloqueamos los gestos de iOS (como el back)
+                if (diffX > diffY) {
+                    e.preventDefault();
+                }
+            }, { passive: false }); // Debe ser false para permitir e.preventDefault() en iOS
 
             track.addEventListener('touchend', (e) => {
                 isDragging = false;
